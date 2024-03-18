@@ -78,7 +78,7 @@ int main()
             searchStudentByBatch();
             break;
         case 7:
-            printf("Exiting...\n");
+            printf("Exiting...Thanks For using SMSBB\n");
             break;
         default:
             printf("Invalid choice. Please try again.\n");
