@@ -19,13 +19,14 @@ typedef struct
     char role[10]; // New field to store user role (e.g., teacher or admin)
 } User;
 
-// Function prototypes
+// Functions
 void login();
 void registerUser(); // New function for user registration
 void addStudent();
 void searchStudentByBloodGroup();
 void searchStudentByID();
 void searchStudentByBatch();
+void displayMenu();
 
 // Global variables
 Student students[100]; // Assuming a maximum of 100 students
@@ -46,15 +47,8 @@ int main()
 
     do
     {
-        printf("\n===== Student Management System (SMSBB) Menu =====\n");
-        printf("1. Login\n");
-        printf("2. Register\n"); // option for user registration
-        printf("3. Add Student\n");
-        printf("4. Search Student by Blood Group\n");
-        printf("5. Search Student by ID\n");
-        printf("6. Search Student by Batch\n");
-        printf("7. Exit\n");
-        printf("Enter your choice: ");
+        displayMenu();
+
         scanf("%d", &choice);
 
         switch (choice)
@@ -86,6 +80,20 @@ int main()
     } while (choice != 7);
 
     return 0;
+}
+
+// Function for display the menu
+void displayMenu()
+{
+    printf("\n===== Student Management System (SMSBB) Menu =====\n");
+    printf("1. Teacher Login\n");
+    printf("2. Teacher Register\n"); // option for user registration
+    printf("3. Add Student (Only for Teachers)\n");
+    printf("4. Search Student by Blood Group\n");
+    printf("5. Search Student by ID\n");
+    printf("6. Search Student by Batch\n");
+    printf("7. Exit\n");
+    printf("Enter your choice: ");
 }
 
 // Function to handle user login
@@ -205,7 +213,30 @@ void addStudent()
 // Function to search for students by blood group
 void searchStudentByBloodGroup()
 {
-    // Code to search for students by blood group
+    char searchBloodGroup[4];
+    int found = 0;
+    int count = 0;
+
+    // Prompt the user to enter the blood group to search for
+    printf("Enter the blood group to search for: ");
+    scanf("%s", searchBloodGroup);
+
+    // Iterate through the students array to find matching blood group
+    printf("\nStudents with blood group %s:\n", searchBloodGroup);
+    for (int i = 0; i < numStudents; i++)
+    {
+        if (strcmp(students[i].blood_group, searchBloodGroup) == 0)
+        {
+            printf("%d. ID: %d, Batch: %s, Semester: %d, Result: %.2f\n", ++count, students[i].id, students[i].batch, students[i].semester, students[i].result);
+            found = 1;
+        }
+    }
+
+    // If no students with the given blood group are found
+    if (!found)
+    {
+        printf("No students found with blood group %s.\n", searchBloodGroup);
+    }
 }
 
 // Function to search for students by ID
