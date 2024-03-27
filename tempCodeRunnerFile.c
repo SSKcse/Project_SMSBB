@@ -5,7 +5,6 @@
 // Define structures for student and user data
 typedef struct
 {
-    char name[50]; // Name of the student
     int id;
     char batch[20];
     int semester;
@@ -43,7 +42,7 @@ int main()
     // Initialize some users
     strcpy(users[numUsers].username, "admin");
     strcpy(users[numUsers].password, "admin123");
-    strcpy(users[numUsers].role, "teacher");
+    strcpy(users[numUsers].role, "admin");
     numUsers++;
 
     do
@@ -116,8 +115,13 @@ void login()
         {
             printf("Login successful!\n");
 
-        
-             if (strcmp(users[i].role, "teacher") == 0)
+            // Optionally, you can provide access based on user role
+            if (strcmp(users[i].role, "admin") == 0)
+            {
+                printf("Welcome, Admin!\n");
+                // Additional admin privileges or options can be added here
+            }
+            else if (strcmp(users[i].role, "teacher") == 0)
             {
                 printf("Welcome, Teacher!\n");
                 // Additional teacher privileges or options can be added here
@@ -227,7 +231,7 @@ void searchStudentByBloodGroup()
     {
         if (strcmp(students[i].blood_group, searchBloodGroup) == 0)
         {
-            printf("%d. Name: %s, ID: %d, Batch: %s, Semester: %d, Result: %.2f\n", ++count, students[i].name, students[i].id, students[i].batch, students[i].semester, students[i].result);
+            printf("%d. ID: %d, Batch: %s, Semester: %d, Result: %.2f\n", ++count, students[i].id, students[i].batch, students[i].semester, students[i].result);
             found = 1;
         }
     }
@@ -255,7 +259,7 @@ void searchStudentByID()
     {
         if (students[i].id == searchID)
         {
-            printf("Name: %s, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f\n",students[i].name, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
+            printf("ID: %d, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f\n",students[i].id, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
             found = 1;
             break; // Assuming ID is unique, no need to continue searching
         }
@@ -285,7 +289,7 @@ void searchStudentByBatch()
     {
         if (strcmp(students[i].batch, searchBatch) == 0)
         {
-            printf("%d. Name: %s, ID: %d, Semester: %d, Blood Group: %s, Result: %.2f\n", ++count, students[i].name, students[i].id, students[i].semester, students[i].blood_group, students[i].result);
+            printf("%d. ID: %d, Semester: %d, Blood Group: %s, Result: %.2f\n", ++count, students[i].id, students[i].semester, students[i].blood_group, students[i].result);
             found = 1;
         }
     }
