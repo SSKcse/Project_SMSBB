@@ -190,9 +190,9 @@ void addStudent()
     // Prompt the user to enter student details
     printf("Enter student details:\n");
     printf("Name: ");
-    getchar();                                                                    // Clear the input buffer
-    fgets(students[numStudents].name, sizeof(students[numStudents].name), stdin); // Read full name with spaces
-    strtok(students[numStudents].name, "\n");                                     // Remove the trailing newline character from fgets
+    getchar();                                                                    
+    fgets(students[numStudents].name, sizeof(students[numStudents].name), stdin); 
+    strtok(students[numStudents].name, "\n");                                    
     printf("ID: ");
     scanf("%d", &students[numStudents].id);
     printf("Batch: ");
