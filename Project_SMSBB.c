@@ -28,6 +28,8 @@ void searchStudentByBloodGroup();
 void searchStudentByID();
 void searchStudentByBatch();
 void displayMenu();
+void saveDataToFile();
+void loadDataFromFile();
 
 // Global variables
 Student students[100]; // Assuming a maximum of 100 students
@@ -38,6 +40,9 @@ int numUsers = 0;
 int main()
 {
     int choice;
+
+    // Load data from file at the start of the program
+    loadDataFromFile();
 
     // Populate some sample data (optional)
     // Initialize some users
@@ -73,6 +78,7 @@ int main()
             searchStudentByBatch();
             break;
         case 7:
+            saveDataToFile(); // Save data to file before exiting
             printf("Exiting...Thanks For using SMSBB\n");
             break;
         default:
@@ -116,8 +122,8 @@ void login()
         {
             printf("Login successful!\n");
 
-        
-             if (strcmp(users[i].role, "teacher") == 0)
+            // Check user role
+            if (strcmp(users[i].role, "teacher") == 0)
             {
                 printf("Welcome, Teacher!\n");
                 // Additional teacher privileges or options can be added here
@@ -190,9 +196,9 @@ void addStudent()
     // Prompt the user to enter student details
     printf("Enter student details:\n");
     printf("Name: ");
-    getchar();                                                                    
-    fgets(students[numStudents].name, sizeof(students[numStudents].name), stdin); 
-    strtok(students[numStudents].name, "\n");                                    
+    getchar();                                                                    // Clear the input buffer
+    fgets(students[numStudents].name, sizeof(students[numStudents].name), stdin); // Read full name with spaces
+    strtok(students[numStudents].name, "\n");                                     // Remove the trailing newline character from fgets
     printf("ID: ");
     scanf("%d", &students[numStudents].id);
     printf("Batch: ");
@@ -255,7 +261,7 @@ void searchStudentByID()
     {
         if (students[i].id == searchID)
         {
-            printf("Name: %s, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f\n",students[i].name, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
+            printf("Name: %s, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f\n", students[i].name, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
             found = 1;
             break; // Assuming ID is unique, no need to continue searching
         }
@@ -295,4 +301,47 @@ void searchStudentByBatch()
     {
         printf("No students found in batch %s.\n", searchBatch);
     }
+}
+
+// Function to save student data to a text file
+void saveDataToFile()
+{
+    FILE *file = fopen("student_data.txt", "w");
+    if (file == NULL)
+    {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    // Write each student's data to the file
+    for (int i = 0; i < numStudents; i++)
+    {
+        fprintf(file, "%s;%d;%s;%d;%s;%.2f\n", students[i].name, students[i].id, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
+    }
+
+    fclose(file);
+    printf("Data saved to file successfully.\n");
+}
+
+// Function to load student data from a text file
+void loadDataFromFile()
+{
+    FILE *file = fopen("student_data.txt", "r");
+    if (file == NULL)
+    {
+        printf("Error opening file for reading.\n");
+        return;
+    }
+
+    // Read each line from the file and parse student data
+    char line[100];
+    while (fgets(line, sizeof(line), file))
+    {
+        Student newStudent;
+        sscanf(line, "%[^;];%d;%[^;];%d;%[^;];%f", newStudent.name, &newStudent.id, newStudent.batch, &newStudent.semester, newStudent.blood_group, &newStudent.result);
+        students[numStudents++] = newStudent;
+    }
+
+    fclose(file);
+    printf("Data loaded from file successfully.\n");
 }
