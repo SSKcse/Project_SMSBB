@@ -3,17 +3,19 @@
 #include <string.h>
 
 // Define structures for student and user data
-typedef struct
+typedef struct Student
 {
-    char name[50]; // Name of the student
+    char name[50];
     int id;
     char batch[20];
     int semester;
     char blood_group[4];
     float result;
+    char mobile_number[15]; // New field for mobile number
+    struct Student *next;
 } Student;
 
-typedef struct
+typedef struct User
 {
     char username[20];
     char password[20];
@@ -32,8 +34,7 @@ void saveDataToFile();
 void loadDataFromFile();
 
 // Global variables
-Student students[100]; // Assuming a maximum of 100 students
-int numStudents = 0;
+Student *studentHead = NULL;
 User users[10]; // Assuming a maximum of 10 users
 int numUsers = 0;
 
@@ -54,7 +55,6 @@ int main()
     do
     {
         displayMenu();
-
         scanf("%d", &choice);
 
         switch (choice)
@@ -186,32 +186,35 @@ void addStudent()
         return;
     }
 
-    // Check if there is space to add a new student
-    if (numStudents >= 100)
+    // Prompt the user to enter student details
+    Student *newStudent = (Student *)malloc(sizeof(Student));
+    if (newStudent == NULL)
     {
-        printf("Cannot add more students. Maximum limit reached.\n");
+        printf("Memory allocation failed.\n");
         return;
     }
 
-    // Prompt the user to enter student details
     printf("Enter student details:\n");
     printf("Name: ");
-    getchar();                                                                    // Clear the input buffer
-    fgets(students[numStudents].name, sizeof(students[numStudents].name), stdin); // Read full name with spaces
-    strtok(students[numStudents].name, "\n");                                     // Remove the trailing newline character from fgets
+    getchar();                                                // Clear the input buffer
+    fgets(newStudent->name, sizeof(newStudent->name), stdin); // Read full name with spaces
+    strtok(newStudent->name, "\n");                           // Remove the trailing newline character from fgets
     printf("ID: ");
-    scanf("%d", &students[numStudents].id);
+    scanf("%d", &newStudent->id);
     printf("Batch: ");
-    scanf("%s", students[numStudents].batch);
+    scanf("%s", newStudent->batch);
     printf("Semester: ");
-    scanf("%d", &students[numStudents].semester);
+    scanf("%d", &newStudent->semester);
     printf("Blood Group: ");
-    scanf("%s", students[numStudents].blood_group);
+    scanf("%s", newStudent->blood_group);
     printf("Result: ");
-    scanf("%f", &students[numStudents].result);
+    scanf("%f", &newStudent->result);
+    printf("Mobile Number: ");
+    scanf("%s", newStudent->mobile_number);
 
-    // Increment the number of students in the system
-    numStudents++;
+    // Add the new student to the linked list
+    newStudent->next = studentHead;
+    studentHead = newStudent;
 
     printf("Student added successfully!\n");
 }
@@ -222,20 +225,22 @@ void searchStudentByBloodGroup()
     char searchBloodGroup[4];
     int found = 0;
     int count = 0;
+    Student *currentStudent = studentHead;
 
     // Prompt the user to enter the blood group to search for
     printf("Enter the blood group to search for: ");
     scanf("%s", searchBloodGroup);
 
-    // Iterate through the students array to find matching blood group
+    // Iterate through the students linked list to find matching blood group
     printf("\nStudents with blood group %s:\n", searchBloodGroup);
-    for (int i = 0; i < numStudents; i++)
+    while (currentStudent != NULL)
     {
-        if (strcmp(students[i].blood_group, searchBloodGroup) == 0)
+        if (strcmp(currentStudent->blood_group, searchBloodGroup) == 0)
         {
-            printf("%d. Name: %s, ID: %d, Batch: %s, Semester: %d, Result: %.2f\n", ++count, students[i].name, students[i].id, students[i].batch, students[i].semester, students[i].result);
+            printf("%d. Name: %s, ID: %d, Batch: %s, Semester: %d, Result: %.2f, Mobile Number: %s\n", ++count, currentStudent->name, currentStudent->id, currentStudent->batch, currentStudent->semester, currentStudent->result, currentStudent->mobile_number);
             found = 1;
         }
+        currentStudent = currentStudent->next;
     }
 
     // If no students with the given blood group are found
@@ -250,21 +255,23 @@ void searchStudentByID()
 {
     int searchID;
     int found = 0;
+    Student *currentStudent = studentHead;
 
     // Prompt the user to enter the ID to search for
     printf("Enter the ID to search for: ");
     scanf("%d", &searchID);
 
-    // Iterate through the students array to find matching ID
+    // Iterate through the students linked list to find matching ID
     printf("\nStudents with ID %d:\n", searchID);
-    for (int i = 0; i < numStudents; i++)
+    while (currentStudent != NULL)
     {
-        if (students[i].id == searchID)
+        if (currentStudent->id == searchID)
         {
-            printf("Name: %s, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f\n", students[i].name, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
+            printf("Name: %s, Batch: %s, Semester: %d, Blood Group: %s, Result: %.2f, Mobile Number: %s\n", currentStudent->name, currentStudent->batch, currentStudent->semester, currentStudent->blood_group, currentStudent->result, currentStudent->mobile_number);
             found = 1;
             break; // Assuming ID is unique, no need to continue searching
         }
+        currentStudent = currentStudent->next;
     }
 
     // If no students with the given ID are found
@@ -280,20 +287,22 @@ void searchStudentByBatch()
     char searchBatch[20];
     int found = 0;
     int count = 0;
+    Student *currentStudent = studentHead;
 
     // Prompt the user to enter the batch to search for
     printf("Enter the batch to search for: ");
     scanf("%s", searchBatch);
 
-    // Iterate through the students array to find matching batch
+    // Iterate through the students linked list to find matching batch
     printf("\nStudents in batch %s:\n", searchBatch);
-    for (int i = 0; i < numStudents; i++)
+    while (currentStudent != NULL)
     {
-        if (strcmp(students[i].batch, searchBatch) == 0)
+        if (strcmp(currentStudent->batch, searchBatch) == 0)
         {
-            printf("%d. Name: %s, ID: %d, Semester: %d, Blood Group: %s, Result: %.2f\n", ++count, students[i].name, students[i].id, students[i].semester, students[i].blood_group, students[i].result);
+            printf("%d. Name: %s, ID: %d, Semester: %d, Blood Group: %s, Result: %.2f, Mobile Number: %s\n", ++count, currentStudent->name, currentStudent->id, currentStudent->semester, currentStudent->blood_group, currentStudent->result, currentStudent->mobile_number);
             found = 1;
         }
+        currentStudent = currentStudent->next;
     }
 
     // If no students in the given batch are found
@@ -314,9 +323,11 @@ void saveDataToFile()
     }
 
     // Write each student's data to the file
-    for (int i = 0; i < numStudents; i++)
+    Student *currentStudent = studentHead;
+    while (currentStudent != NULL)
     {
-        fprintf(file, "%s;%d;%s;%d;%s;%.2f\n", students[i].name, students[i].id, students[i].batch, students[i].semester, students[i].blood_group, students[i].result);
+        fprintf(file, "%s;%d;%s;%d;%s;%.2f;%s\n", currentStudent->name, currentStudent->id, currentStudent->batch, currentStudent->semester, currentStudent->blood_group, currentStudent->result, currentStudent->mobile_number);
+        currentStudent = currentStudent->next;
     }
 
     fclose(file);
@@ -334,12 +345,19 @@ void loadDataFromFile()
     }
 
     // Read each line from the file and parse student data
-    char line[100];
+    char line[200];
     while (fgets(line, sizeof(line), file))
     {
-        Student newStudent;
-        sscanf(line, "%[^;];%d;%[^;];%d;%[^;];%f", newStudent.name, &newStudent.id, newStudent.batch, &newStudent.semester, newStudent.blood_group, &newStudent.result);
-        students[numStudents++] = newStudent;
+        Student *newStudent = (Student *)malloc(sizeof(Student));
+        if (newStudent == NULL)
+        {
+            printf("Memory allocation failed.\n");
+            fclose(file);
+            return;
+        }
+        sscanf(line, "%[^;];%d;%[^;];%d;%[^;];%f;%[^;\n]", newStudent->name, &newStudent->id, newStudent->batch, &newStudent->semester, newStudent->blood_group, &newStudent->result, newStudent->mobile_number);
+        newStudent->next = studentHead;
+        studentHead = newStudent;
     }
 
     fclose(file);
